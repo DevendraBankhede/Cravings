@@ -2,16 +2,27 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { AiOutlineLogout } from "react-icons/ai";
+import api from "../config/api.config.js";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const { user, setUser, isLogin, setIsLogin } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("UserData");
-    setIsLogin(false);
-    setUser(false);
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      const res = await api.get("/auth/logout");
+      sessionStorage.removeItem("UserData");
+      setIsLogin(false);
+      setUser(false);
+      navigate("/");
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error(
+        error.response.status + " | " + error.response?.data?.message ||
+          error.message,
+      );
+    }
   };
 
   return (
