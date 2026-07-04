@@ -27,7 +27,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="bg-(--primary) text-lg text-(--primary-text) p-3 flex justify-between items-center">
+      <div className="bg-(--accent) text-lg text-(--primary-text) p-3 flex justify-between items-center">
         <div>Cravings</div>
 
         <div className="flex gap-4 items-center">
@@ -63,7 +63,7 @@ const Navbar = () => {
             <>
               <Link
                 to={"/login"}
-                className="hover:underline hover:text-(--accent)"
+                className="hover:underline"
               >
                 Login
               </Link>
