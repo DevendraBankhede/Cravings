@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import { genToken } from "../utils/auth.service.js";
 
 export const RegisterUser = async (req, res, next) => {
   try {
@@ -64,6 +65,8 @@ export const LoginUser = async (req, res, next) => {
       return next(error);
     }
 
+    await genToken(existingUser, res);
+
     res.status(200).json({
       message: "Welcome Back",
       data: existingUser,
@@ -76,7 +79,9 @@ export const LoginUser = async (req, res, next) => {
 
 export const LogoutUser = async (req, res, next) => {
   try {
-    //Controller Logic
+    res.clearCookie("Oreo", { maxAge: 0 });
+
+    res.status(200).json({ message: "Logout Sucessfully" });
   } catch (error) {
     console.log(error.message);
     next();
