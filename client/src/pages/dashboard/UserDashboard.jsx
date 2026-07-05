@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/userDashboard/Sidebar";
-import Overview from "../../components/userDashboard/Overview";
-import Orders from "../../components/userDashboard/Orders";
-import Settings from "../../components/userDashboard/Settings";
+import Overview from "../../components/userDashboard/CustomerOverview";
+import Orders from "../../components/userDashboard/CustomerOrders";
+import Settings from "../../components/userDashboard/CustomerSettings";
 import WishList from "../../components/userDashboard/WishList";
 
 const UserDashboard = () => {
