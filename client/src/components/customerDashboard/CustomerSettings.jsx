@@ -5,44 +5,18 @@ import api from "../../config/Apiconfig";
 import toast from "react-hot-toast";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 
-const CustomerSettings = () => {
+const CustomerSetting = () => {
   const { user, setUser } = useAuth();
-
-  // User Profile States
-  const [profileData, setProfileData] = useState({
-    fullName: user?.fullName || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    photo: user?.photo.url || "https://via.placeholder.com/150",
-  });
-
   const [editingProfile, setEditingProfile] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
   const [profilePicPreview, setProfilePicPreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
     phone: user?.phone || "",
   });
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
-
-  // Update profileData when user changes
-  useEffect(() => {
-    if (user) {
-      setProfileData({
-        fullName: user.fullName || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        photo: user.photo || "https://via.placeholder.com/150",
-      });
-      setFormData({
-        fullName: user.fullName || "",
-        email: user.email || "",
-        phone: user.phone || "",
-      });
-    }
-  }, [user?.fullName, user?.email, user?.phone, user?.photo]);
 
   // Profile handlers
   const handleProfileChange = (e) => {
@@ -52,7 +26,7 @@ const CustomerSettings = () => {
 
   const handleSaveProfile = async () => {
     try {
-      setIsSavingProfile(true);
+      setIsLoading(true);
 
       const payload = new FormData();
       payload.append("fullName", formData.fullName);
@@ -63,32 +37,25 @@ const CustomerSettings = () => {
 
       const response = await api.put(`/user/edit-profile`, payload);
 
-      const updatedUser = response.data.data;
-      setProfileData({
-        fullName: updatedUser.fullName || "",
-        email: updatedUser.email || "",
-        phone: updatedUser.phone || "",
-        photo: updatedUser.photo || "https://via.placeholder.com/150",
-      });
-
-      setUser(updatedUser);
-      sessionStorage.setItem("cravingUser", JSON.stringify(updatedUser));
+      setUser(response.data.data);
+      sessionStorage.setItem("cravingUser", JSON.stringify(response.data.data));
 
       setEditingProfile(false);
       toast.success("Profile updated successfully!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update profile");
     } finally {
-      setIsSavingProfile(false);
+      setIsLoading(false);
     }
   };
 
   const handleCancelProfile = () => {
     setFormData({
-      fullName: profileData.fullName,
-      email: profileData.email,
-      phone: profileData.phone,
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone,
     });
+    setProfilePicPreview(null);
     setEditingProfile(false);
   };
 
@@ -116,14 +83,14 @@ const CustomerSettings = () => {
               <button
                 onClick={handleSaveProfile}
                 className="flex items-center gap-2 bg-(--color-primary) text-(--color-primary-content) px-3 py-1 rounded text-sm"
-                disabled={isSavingProfile}
+                disabled={isLoading}
               >
-                {isSavingProfile ? "Saving..." : "Save Changes"}
+                {isLoading ? "Saving..." : "Save Changes"}
               </button>
               <button
                 onClick={handleCancelProfile}
                 className="flex items-center gap-2 bg-(--color-secondary) text-(--color-secondary-content) px-3 py-1 rounded text-sm"
-                disabled={isSavingProfile}
+                disabled={isLoading}
               >
                 Cancel
               </button>
@@ -136,7 +103,7 @@ const CustomerSettings = () => {
             <div className="relative">
               <div className="w-36 h-36">
                 <img
-                  src={profilePicPreview || profileData.photo}
+                  src={profilePicPreview || user.photo.url}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-2 border-(--color-primary)"
                 />
@@ -184,8 +151,8 @@ const CustomerSettings = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleProfileChange}
-                  className={`w-full px-3 py-2 border ${editingProfile ? "border-(--color-secondary)" : "border-transparent"} rounded col-span-4`}
-                  disabled={!editingProfile}
+                  className={`w-full px-3 py-2 border ${editingProfile ? "border-(--color-secondary) text-(--color-secondary) disabled:bg-(--color-secondary)/50 cursor-not-allowed" : "border-transparent"} rounded col-span-4`}
+                  disabled
                 />
 
                 <label className="block text-sm font-semibold mb-2">
@@ -208,4 +175,4 @@ const CustomerSettings = () => {
   );
 };
 
-export default CustomerSettings;
+export default CustomerSetting;
