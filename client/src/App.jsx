@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CustomerDashboard from "./pages/dashboard/CustomerDashboard";
-import Contact from "./pages/ContactUs";
+import ContactUs from "./pages/ContactUs";
 
 const App = () => {
 
@@ -17,12 +17,12 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/contactUs" element={<ContactUs />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/register/:userType" element={<Register />} />
-        <Route path="/Customer-dashboard" element={<CustomerDashboard />} />
+        <Route path="/customer-dashboard" element={<CustomerDashboard />} />
       </Routes>
       <Footer />
     </>

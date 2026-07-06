@@ -4,7 +4,8 @@ import logoLight from "../assets/transparentLogoLight.png";
 import { useAuth } from "../context/AuthContext";
 import { FaPowerOff } from "react-icons/fa";
 import toast from "react-hot-toast";
-import api from "../config/api.config";
+import api from "../config/Apiconfig";
+
 const Navbar = () => {
   const { user, isLogin, role, setUser, setIsLogin, setRole } = useAuth();
   const navigate = useNavigate();

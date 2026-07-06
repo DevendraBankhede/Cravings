@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../config/api.config";
+import api from "../../config/Apiconfig";
 import toast from "react-hot-toast";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 
-const CustomerSetting = () => {
+const CustomerSettings = () => {
   const { user, setUser } = useAuth();
 
   // User Profile States
@@ -13,10 +13,11 @@ const CustomerSetting = () => {
     fullName: user?.fullName || "",
     email: user?.email || "",
     phone: user?.phone || "",
-    photo: user?.photo || "https://via.placeholder.com/150",
+    photo: user?.photo.url || "https://via.placeholder.com/150",
   });
 
   const [editingProfile, setEditingProfile] = useState(false);
+  const [profilePic, setProfilePic] = useState(null);
   const [profilePicPreview, setProfilePicPreview] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -53,11 +54,14 @@ const CustomerSetting = () => {
     try {
       setIsSavingProfile(true);
 
-      const response = await api.put(`/user/edit-profile`, {
-        fullName: formData.fullName,
-        email: formData.email.toLowerCase(),
-        phone: formData.phone,
-      });
+      const payload = new FormData();
+      payload.append("fullName", formData.fullName);
+      payload.append("email", formData.email.toLowerCase());
+      payload.append("phone", formData.phone);
+
+      payload.append("displayPic", profilePic);
+
+      const response = await api.put(`/user/edit-profile`, payload);
 
       const updatedUser = response.data.data;
       setProfileData({
@@ -90,12 +94,8 @@ const CustomerSetting = () => {
 
   const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
-    const fileURL = URL.createObjectURL(file);
-
-    console.log(file);
-    console.log(fileURL);
-
-    setProfilePicPreview(fileURL);
+    setProfilePicPreview(URL.createObjectURL(file));
+    setProfilePic(file);
   };
 
   return (
@@ -142,22 +142,24 @@ const CustomerSetting = () => {
                 />
               </div>
 
-              <div
-                className="absolute cursor-pointer bottom-1 right-1 border p-2 rounded-full w-fit bg-(--color-base-200)"
-                title="Change Photo"
-              >
-                <label htmlFor="profilePic" className="cursor-pointer">
-                  <MdOutlineAddAPhoto className="text-xl" />
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  name="profilePic"
-                  id="profilePic"
-                  className="hidden"
-                  onChange={handleProfilePicChange}
-                />
-              </div>
+              {editingProfile && (
+                <div
+                  className="absolute cursor-pointer bottom-1 right-1 border p-2 rounded-full w-fit bg-(--color-base-200)"
+                  title="Change Photo"
+                >
+                  <label htmlFor="profilePic" className="cursor-pointer">
+                    <MdOutlineAddAPhoto className="text-xl" />
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    name="profilePic"
+                    id="profilePic"
+                    className="hidden"
+                    onChange={handleProfilePicChange}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="space-y-4 w-full">
@@ -206,4 +208,4 @@ const CustomerSetting = () => {
   );
 };
 
-export default CustomerSetting;
+export default CustomerSettings;
