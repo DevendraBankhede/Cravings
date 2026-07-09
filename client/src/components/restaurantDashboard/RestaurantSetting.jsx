@@ -5,7 +5,7 @@ import api from "../../config/Apiconfig";
 import toast from "react-hot-toast";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 
-const CustomerSetting = () => {
+const RestaurantSetting = () => {
   const { user, setUser } = useAuth();
   const [editingProfile, setEditingProfile] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
@@ -175,4 +175,4 @@ const CustomerSetting = () => {
   );
 };
 
-export default CustomerSetting;
+export default RestaurantSetting;
