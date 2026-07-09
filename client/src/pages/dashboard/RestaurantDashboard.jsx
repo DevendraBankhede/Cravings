@@ -1,23 +1,23 @@
 import React from "react";
-import Sidebar from "../../components/customerDashboard/Sidebar";
-import CustomerOverview from "../../components/customerDashboard/CustomerOverview";
-import CustomerOrders from "../../components/customerDashboard/CustomerOrders";
-import CustomerSetting from "../../components/customerDashboard/CustomerSetting";
-import { useLocation , useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import RestaurantSidebar from "../../components/restaurantDashboard/RestaurantSidebar";
+import RestaurantOverview from "../../components/restaurantDashboard/RestaurantOverview";
+import RestaurantSetting from "../../components/restaurantDashboard/RestaurantSetting";
+import RestaurantOrders from "../../components/restaurantDashboard/RestaurantOrders";
 
-const CustomerDashboard = () => {
+const RestaurantDashboard = () => {
   const { isLogin,role } = useAuth();
   const navigate = useNavigate();
   const active = useLocation().state?.activeTab;
   const [activeTab, setActiveTab] = React.useState(active || "overview");
 
-  if (!isLogin || role !== "customer") {
+  if (!isLogin || role !== "restaurant") {
     return (
       <div className="h-[92vh] bg-[url('/foodTable.webp')]  bg-cover bg-center">
         <div className="h-full backdrop-blur-lg flex flex-col items-center justify-center ">
           <h1 className="text-2xl font-bold text-(--color-neutral-content)">
-            Access Denied. Please log in as a customer to view this
+            Access Denied. Please log in as a Restaurant Manager to view this
             page.
           </h1>
           <button
@@ -31,21 +31,23 @@ const CustomerDashboard = () => {
     );
   }
 
-
   return (
     <>
       <div className="h-[92vh] flex gap-2 m-2">
         <div className="w-3/17 bg-(--color-base-200) p-4 rounded-lg shadow-md h-full">
-          <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+          <RestaurantSidebar
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </div>
         <div className="w-14/17 bg-(--color-base-100) p-4 rounded-lg shadow-md h-full">
-          {activeTab === "overview" && <CustomerOverview />}
-          {activeTab === "orders" && <CustomerOrders />}
-          {activeTab === "settings" && <CustomerSetting />}
+          {activeTab === "overview" && <RestaurantOverview />}
+          {activeTab === "orders" && <RestaurantOrders />}
+          {activeTab === "settings" && <RestaurantSetting />}
         </div>
       </div>
     </>
   );
 };
 
-export default CustomerDashboard;
+export default RestaurantDashboard;
