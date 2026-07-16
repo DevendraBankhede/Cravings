@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "../../components/customerDashboard/Sidebar";
+import Sidebar from "../../components/customerDashboard/CustomerSidebar";
 import CustomerOverview from "../../components/customerDashboard/CustomerOverview";
 import CustomerOrders from "../../components/customerDashboard/CustomerOrders";
 import CustomerSetting from "../../components/customerDashboard/CustomerSetting";
