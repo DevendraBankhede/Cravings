@@ -10,7 +10,7 @@ const RestaurantDashboard = () => {
   const { isLogin,role } = useAuth();
   const navigate = useNavigate();
   const active = useLocation().state?.activeTab;
-  const [activeTab, setActiveTab] = React.useState(active || "overview");
+  const [activeTab, setActiveTab] = React.useState(active || "settings");
 
   if (!isLogin || role !== "restaurant") {
     return (
@@ -33,7 +33,7 @@ const RestaurantDashboard = () => {
 
   return (
     <>
-      <div className="h-[92vh] flex gap-2 m-2">
+      <div className="h-[91vh] flex gap-2 p-2">
         <div className="w-3/17 bg-(--color-base-200) p-4 rounded-lg shadow-md h-full">
           <RestaurantSidebar
             activeTab={activeTab}
