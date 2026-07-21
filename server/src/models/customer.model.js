@@ -16,7 +16,7 @@ const CustomerSchema = mongoose.Schema(
           state: { type: String, required: true },
           pinCode: { type: String, required: true },
           country: { type: String, required: true },
-          type: {
+          addressType: {
             type: String,
             enum: ["home", "work", "other"],
             required: true,
@@ -34,6 +34,15 @@ const CustomerSchema = mongoose.Schema(
           },
         },
       ],
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "verified", "suspended"],
+      default: "pending",
     },
   },
   { timestamps: true },
