@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../config/ApiConfig";
+import api from "../../config/Apiconfig";
 import toast from "react-hot-toast";
 import { RiLoader4Fill } from "react-icons/ri";
 import { useAuth } from "../../context/AuthContext";
