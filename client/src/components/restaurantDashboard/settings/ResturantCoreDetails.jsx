@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
 import { useAuth } from "../../../context/AuthContext";
-import api from "../../../config/Apiconfig";
+import api from "../../../config/ApiConfig";
 import toast from "react-hot-toast";
 import { MdOutlineAddAPhoto, MdOutlineLockReset } from "react-icons/md";
 import PasswordChangeModal from "../../commonModals/PasswordChangeModal";
