@@ -20,8 +20,8 @@ const RestaurantSetting = () => {
 
   const [isLoadingResturantOpen, setIsLoadingResturantOpen] = useState(true);
   const [isRestaurantOpen, setIsRestaurantOpen] = useState(
-    sessionStorage.getItem("RestaurantOpen") || false,
-  );  
+    () => sessionStorage.getItem("RestaurantOpen") === "true",
+  );
 
   //Load Restaurant Data
   const [isLoadingRestaurant, setIsLoadingRestaurant] = useState(false);
@@ -72,6 +72,7 @@ const RestaurantSetting = () => {
         "cravingRestaurant",
         JSON.stringify(res.data.data),
       );
+      sessionStorage.setItem("RestaurantOpen", res.data.data.isOpen);
 
       toast.success(res.data.message);
     } catch (error) {
@@ -85,10 +86,10 @@ const RestaurantSetting = () => {
   };
 
   useEffect(() => {
-    fetchRestaurantData();
+    if (user?._id) {
+      fetchRestaurantData();
+    }
   }, [user]);
-
-  console.log(isRestaurantOpen);
 
   return (
     <>
@@ -115,7 +116,7 @@ const RestaurantSetting = () => {
                 type="checkbox"
                 name="isOpen"
                 checked={isRestaurantOpen}
-                onClick={handleRestaurantOpen}
+                onChange={handleRestaurantOpen}
                 className=" w-4 h-4 accent-(--color-primary)"
               />
             )}
