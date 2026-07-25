@@ -49,9 +49,12 @@ export const deleteSingleImage = async (image) => {
 
 export const uploadSingleImage = async (image, storageLocation) => {
   try {
+    console.log("Upload Started");
+
     const b64 = Buffer.from(image.buffer).toString("base64");
     const dataURI = `data:${image.mimetype};base64,${b64}`;
 
+    console.log("Data URI created:", dataURI.slice(0, 100)); // Log the first 100 characters of the Data URI for debugging
     const result = await cloudinary.uploader.upload(dataURI, {
       folder: storageLocation,
       width: 500,
@@ -59,12 +62,17 @@ export const uploadSingleImage = async (image, storageLocation) => {
       crop: "fill",
     });
 
+    console.log("Image uploaded to Cloudinary:", {
+      url: result.secure_url,
+      publicId: result.public_id,
+    });
+
     return {
       url: result.secure_url,
       publicId: result.public_id,
     };
   } catch (error) {
-    console.log(error.message);
+    console.log("uploadSingleImage error details:", error);
     throw error;
   }
 };
