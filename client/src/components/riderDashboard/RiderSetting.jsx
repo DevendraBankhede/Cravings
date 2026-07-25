@@ -3,7 +3,7 @@ import { MdEdit } from "react-icons/md";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/Apiconfig";
 import toast from "react-hot-toast";
-import { MdOutlineAddAPhoto } from "react-icons/md";
+import { MdOutlineAddAPhoto ,MdOutlineLockReset } from "react-icons/md";
 import PasswordChangeModal from "../commonModals/PasswordChangeModal";
 
 const RiderSetting = () => {
@@ -38,7 +38,7 @@ const RiderSetting = () => {
 
       payload.append("displayPic", profilePic);
 
-      const response = await api.put(`/user/edit-profile`, payload);
+      const response = await api.put(`/common/edit-profile`, payload);
 
       setUser(response.data.data);
       sessionStorage.setItem("cravingUser", JSON.stringify(response.data.data));
