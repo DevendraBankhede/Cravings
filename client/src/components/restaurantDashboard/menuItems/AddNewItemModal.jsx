@@ -2,6 +2,7 @@ import React from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import api from "../../../config/Apiconfig";
 import toast from "react-hot-toast";
+import { FaRegFileImage } from "react-icons/fa";
 
 const itemCategories = [
   "Appetizer",
@@ -86,6 +87,7 @@ const AddNewItemModal = ({ isOpen, onClose }) => {
 
       const res = await api.post("/restaurant/add-menu-item", formData);
       toast.success(res.data.message);
+      handleOnClose();
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -96,6 +98,20 @@ const AddNewItemModal = ({ isOpen, onClose }) => {
     }
   };
   const handleOnClose = () => {
+    setNewItemFormData({
+      itemName: "",
+      description: "",
+      price: "",
+      category: "",
+      foodType: "",
+      status: "available",
+      isTopRated: false,
+      isRecommended: false,
+      isNew: true,
+      isDeleted: false,
+    });
+    setPreviewImage(null);
+    setItemImage(null);
     onClose();
   };
 
@@ -117,19 +133,24 @@ const AddNewItemModal = ({ isOpen, onClose }) => {
           <main>
             <form className=" space-y-4">
               <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-1 space-x-0 space-y-2">
-                  <label className="block mb-1 font-medium" htmlFor="itemImage">
-                    Item Image
-                  </label>
-                  {previewImage && (
-                    <div className="col-span-1">
+                <div className=" flex justify-center items-center">
+                  <div className="h-52 w-52 mx-auto border-2 border-(--color-primary) rounded overflow-hidden">
+                    {previewImage ? (
                       <img
                         src={previewImage}
                         alt="Preview"
-                        className="w-full h-auto rounded"
+                        className="h-full w-full object-cover"
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <label
+                        htmlFor="itemImage"
+                        className="cursor-pointer flex flex-col items-center justify-center h-full text-(--color-primary)/60 hover:text-(--color-primary) text-center"
+                      >
+                        <FaRegFileImage size={32} className="mb-2" />
+                        <span>Click here to upload an image</span>
+                      </label>
+                    )}
+                  </div>
                   <input
                     type="file"
                     id="itemImage"
@@ -139,7 +160,7 @@ const AddNewItemModal = ({ isOpen, onClose }) => {
                       setItemImage(file);
                       setPreviewImage(URL.createObjectURL(file));
                     }}
-                    className="w-full border border-(--color-primary) text-(--color-primary) rounded px-3 py-2"
+                    className="hidden"
                   />
                 </div>
                 <div className="space-y-4 col-span-2">
@@ -252,16 +273,18 @@ const AddNewItemModal = ({ isOpen, onClose }) => {
 
           <footer className="flex justify-between border-t border-(--color-secondary) pt-2 mt-4">
             <button
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
+              className="bg-(--color-secondary) disabled:bg-(--color-secondary)/60 text-(--color-secondary-content) px-4 py-2 rounded mr-2"
               onClick={handleOnClose}
+              disabled={isLoading}
             >
               Cancel
             </button>
             <button
-              className="bg-(--color-primary) text-(--color-primary-content) px-4 py-2 rounded"
+              className="bg-(--color-primary) disabled:bg-(--color-primary)/60 text-(--color-primary-content) px-4 py-2 rounded"
               onClick={handleAddNewItem}
+              disabled={isLoading}
             >
-              Add Item
+              {isLoading ? "Adding..." : "Add Item"}
             </button>
           </footer>
         </div>
