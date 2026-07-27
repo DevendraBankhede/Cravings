@@ -38,7 +38,7 @@ const foodTypes = [
   "Other",
 ];
 
-const AddNewItemModal = ({ isOpen, onClose }) => {
+const AddNewItemModal = ({ isOpen, onClose, onActionSuccess }) => {
   const [newItemFormData, setNewItemFormData] = React.useState({
     itemName: "",
     description: "",
@@ -87,6 +87,9 @@ const AddNewItemModal = ({ isOpen, onClose }) => {
 
       const res = await api.post("/restaurant/add-menu-item", formData);
       toast.success(res.data.message);
+      if (onActionSuccess) {
+        await onActionSuccess();
+      }
       handleOnClose();
     } catch (error) {
       toast.error(
