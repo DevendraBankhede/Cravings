@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 * {
-
   box-sizing: border-box;
 }
 
@@ -65,4 +64,11 @@ input[type="number"] {
 /* Remove password input eye icon */
 input[type="password"]::-ms-reveal {
   display: none;
+}
+
+
+textarea:disabled,
+select:disabled,
+input:disabled {
+  cursor: not-allowed;
 }
