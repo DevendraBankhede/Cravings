@@ -3,10 +3,10 @@ import api from "../../config/Apiconfig";
 import toast from "react-hot-toast";
 import { RiLoader4Fill } from "react-icons/ri";
 import { useAuth } from "../../context/AuthContext";
-import ResturantCoreDetails from "./settings/ResturantCoreDetails";
+import CoreDetails from "./settings/coreDetails/Index";
 import Information from "./settings/restaurantInformation/Index";
 import RestaurantPhotos from "./settings/RestaurantPhotos";
-import Loader from "../../assets/runningLoader.gif";
+import Loader from "../../components/Loader";
 import { IoMdHammer } from "react-icons/io";
 
 const RestaurantSetting = () => {
@@ -94,43 +94,46 @@ const RestaurantSetting = () => {
   return (
     <>
       <div className=" h-full flex flex-col">
-        <div className="border-b border-(--color-secondary)/50 flex justify-between mb-2 w-full">
-          <div className="flex gap-3 ">
-            {Tabs.map((tab, idx) => (
-              <div
-                key={idx}
-                className={`p-2 uppercase cursor-pointer ${activeTab === tab.id ? "text-(--color-primary) border-b-3 border-(--color-primary)" : ""}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </div>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="w-22 text-xs font-semibold">Currently Open</label>
-            {isLoadingResturantOpen || isLoadingRestaurant ? (
-              <RiLoader4Fill className="animate-spin" />
-            ) : (
-              <input
-                type="checkbox"
-                name="isOpen"
-                checked={isRestaurantOpen}
-                onChange={handleRestaurantOpen}
-                className=" w-4 h-4 accent-(--color-primary)"
-              />
-            )}
-          </div>
-        </div>
-
         {isLoadingRestaurant ? (
-          <img src={Loader} alt="" className="w-50 h-10" />
+          <Loader height="100%" width="100%" />
         ) : (
-          <div className="h-full rounded-lg bg-(--color-base-200) p-2">
-            {activeTab === "information" && <Information />}
-            {activeTab === "coreDetails" && <ResturantCoreDetails />}
-            {activeTab === "photos" && <RestaurantPhotos />}
-          </div>
+          <>
+            <div className="border-b border-(--color-secondary)/50 flex justify-between mb-2 w-full">
+              <div className="flex gap-3 ">
+                {Tabs.map((tab, idx) => (
+                  <div
+                    key={idx}
+                    className={`p-2 uppercase cursor-pointer ${activeTab === tab.id ? "text-(--color-primary) border-b-3 border-(--color-primary)" : ""}`}
+                    onClick={() => setActiveTab(tab.id)}
+                  >
+                    {tab.label}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <label className="w-22 text-xs font-semibold">
+                  Currently Open
+                </label>
+                {isLoadingResturantOpen || isLoadingRestaurant ? (
+                  <RiLoader4Fill className="animate-spin" />
+                ) : (
+                  <input
+                    type="checkbox"
+                    name="isOpen"
+                    checked={isRestaurantOpen}
+                    onChange={handleRestaurantOpen}
+                    className=" w-4 h-4 accent-(--color-primary)"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="h-full rounded-lg bg-(--color-base-200) p-2">
+              {activeTab === "information" && <Information />}
+              {activeTab === "coreDetails" && <CoreDetails />}
+              {activeTab === "photos" && <RestaurantPhotos />}
+            </div>
+          </>
         )}
       </div>
     </>
