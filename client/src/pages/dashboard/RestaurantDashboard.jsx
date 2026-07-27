@@ -5,12 +5,13 @@ import RestaurantSidebar from "../../components/restaurantDashboard/RestaurantSi
 import RestaurantOverview from "../../components/restaurantDashboard/RestaurantOverview";
 import RestaurantSetting from "../../components/restaurantDashboard/RestaurantSetting";
 import RestaurantOrders from "../../components/restaurantDashboard/RestaurantOrders";
+import RestaurantMenu from "../../components/restaurantDashboard/RestaurantMenu";
 
 const RestaurantDashboard = () => {
   const { isLogin,role } = useAuth();
   const navigate = useNavigate();
   const active = useLocation().state?.activeTab;
-  const [activeTab, setActiveTab] = React.useState(active || "settings");
+  const [activeTab, setActiveTab] = React.useState(active || "menu");
 
   if (!isLogin || role !== "restaurant") {
     return (
@@ -44,6 +45,7 @@ const RestaurantDashboard = () => {
           {activeTab === "overview" && <RestaurantOverview />}
           {activeTab === "orders" && <RestaurantOrders />}
           {activeTab === "settings" && <RestaurantSetting />}
+          {activeTab === "menu" && <RestaurantMenu />}
         </div>
       </div>
     </>
