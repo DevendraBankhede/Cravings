@@ -1,14 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
+import api from "../../../config/Apiconfig";
+import toast from "react-hot-toast";
+import { RiLoader4Fill } from "react-icons/ri";
 
 const RestaurantPhotos = () => {
   const MAX_FILE_SIZE = 1024 * 1024; // 1MB
   const MAX_GALLERY_IMAGES = 8;
 
+  const [restaurantData, setRestaurantData] = useState(
+    JSON.parse(sessionStorage.getItem("cravingRestaurant")) || {},
+  );
   const [coverImage, setCoverImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
   const [errors, setErrors] = useState({ cover: "", gallery: "" });
+  const [isSavingCover, setIsSavingCover] = useState(false);
+  const [isSavingGallery, setIsSavingGallery] = useState(false);
 
   const coverPreview = useMemo(() => {
     return coverImage ? URL.createObjectURL(coverImage) : "";
@@ -102,6 +110,58 @@ const RestaurantPhotos = () => {
     setErrors((prev) => ({ ...prev, gallery: "" }));
   };
 
+  const handleSaveCoverPhoto = async () => {
+    if (!coverImage) {
+      toast.error("Please select a cover image to upload.");
+      return;
+    }
+    try {
+      setIsSavingCover(true);
+      const formData = new FormData();
+      formData.append("coverImage", coverImage);
+      const res = await api.put("/restaurant/update-cover-photo", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setRestaurantData(res.data.data);
+      sessionStorage.setItem("cravingRestaurant", JSON.stringify(res.data.data));
+      toast.success(res.data.message);
+      setCoverImage(null);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update cover photo. Please try again.",
+      );
+    } finally {
+      setIsSavingCover(false);
+    }
+  };
+
+  const handleSaveRestaurantImages = async () => {
+    if (galleryImages.length === 0) {
+      toast.error("Please select at least one restaurant image to upload.");
+      return;
+    }
+    try {
+      setIsSavingGallery(true);
+      const formData = new FormData();
+      galleryImages.forEach((img) => {
+        formData.append("restaurantImages", img);
+      });
+      const res = await api.put("/restaurant/update-restaurant-images", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setRestaurantData(res.data.data);
+      sessionStorage.setItem("cravingRestaurant", JSON.stringify(res.data.data));
+      toast.success(res.data.message);
+      setGalleryImages([]);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update restaurant images. Please try again.",
+      );
+    } finally {
+      setIsSavingGallery(false);
+    }
+  };
+
   return (
     <div className="p-2">
       <div className="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-3 items-start">
@@ -115,9 +175,16 @@ const RestaurantPhotos = () => {
                 Upload one hero image under 1MB.
               </p>
             </div>
-            <div className="text-[11px] px-2 py-1 rounded-full bg-(--color-primary)/10 text-(--color-primary) font-medium">
-              1 file
-            </div>
+            <button
+              onClick={handleSaveCoverPhoto}
+              disabled={!coverImage || isSavingCover}
+              className="flex items-center gap-1.5 bg-(--color-primary) text-(--color-primary-content) px-3 py-1.5 rounded-md text-xs shadow-sm hover:opacity-95 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isSavingCover ? (
+                <RiLoader4Fill className="animate-spin" />
+              ) : null}
+              {isSavingCover ? "Saving..." : "Save Cover Photo"}
+            </button>
           </div>
 
           <div className="space-y-3">
@@ -155,6 +222,9 @@ const RestaurantPhotos = () => {
                     className="w-full h-56 object-cover"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-transparent" />
+                  <span className="absolute top-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-400 text-yellow-900">
+                    New — Not Saved
+                  </span>
                 </div>
                 <div className="flex items-center justify-between gap-2 px-3 py-2 text-xs">
                   <p className="truncate font-medium">{coverImage.name}</p>
@@ -162,6 +232,23 @@ const RestaurantPhotos = () => {
                     {(coverImage.size / 1024).toFixed(1)} KB
                   </span>
                 </div>
+              </div>
+            ) : restaurantData?.coverImage?.url ? (
+              <div className="overflow-hidden rounded-xl border border-(--color-secondary) bg-white shadow-sm">
+                <div className="relative">
+                  <img
+                    src={restaurantData.coverImage.url}
+                    alt="Current Cover"
+                    className="w-full h-56 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-transparent" />
+                  <span className="absolute top-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-400 text-green-900">
+                    Current
+                  </span>
+                </div>
+                <p className="px-3 py-2 text-xs text-(--color-secondary-content)">
+                  Upload a new image above to replace this cover.
+                </p>
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-(--color-secondary) bg-linear-to-br from-white to-(--color-base-100) px-4 py-8 text-center">
@@ -195,7 +282,7 @@ const RestaurantPhotos = () => {
               </p>
             </div>
 
-            <div className="shrink-0">
+            <div className="shrink-0 flex items-center gap-2">
               <label
                 htmlFor="galleryImages"
                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs shadow-sm transition ${galleryImages.length >= MAX_GALLERY_IMAGES ? "bg-(--color-secondary) text-(--color-secondary-content) cursor-not-allowed" : "bg-(--color-primary) text-(--color-primary-content) cursor-pointer hover:opacity-95"}`}
@@ -212,6 +299,16 @@ const RestaurantPhotos = () => {
                 disabled={galleryImages.length >= MAX_GALLERY_IMAGES}
                 className="hidden"
               />
+              <button
+                onClick={handleSaveRestaurantImages}
+                disabled={galleryImages.length === 0 || isSavingGallery}
+                className="inline-flex items-center gap-1.5 bg-(--color-primary) text-(--color-primary-content) px-3 py-1.5 rounded-md text-xs shadow-sm hover:opacity-95 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isSavingGallery ? (
+                  <RiLoader4Fill className="animate-spin" />
+                ) : null}
+                {isSavingGallery ? "Saving..." : "Save Images"}
+              </button>
             </div>
           </div>
 
@@ -223,6 +320,11 @@ const RestaurantPhotos = () => {
 
           {galleryPreviews.length > 0 ? (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="col-span-full mb-1">
+                <p className="text-[11px] text-yellow-600 font-medium">
+                  New images — not saved yet. Click "Save Images" to upload.
+                </p>
+              </div>
               {galleryPreviews.map((imagePreview, index) => (
                 <div
                   key={imagePreview.key}
@@ -250,6 +352,31 @@ const RestaurantPhotos = () => {
                     </p>
                     <p className="mt-0.5 text-[11px] text-(--color-secondary-content)">
                       {(imagePreview.file.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : restaurantData?.restaurantImage?.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="col-span-full mb-1">
+                <p className="text-[11px] text-green-600 font-medium">
+                  Currently saved images. Upload new ones to replace all.
+                </p>
+              </div>
+              {restaurantData.restaurantImage.map((img, index) => (
+                <div
+                  key={img.publicId || index}
+                  className="overflow-hidden rounded-xl border border-(--color-secondary) bg-white shadow-sm"
+                >
+                  <img
+                    src={img.url}
+                    alt={`Restaurant ${index + 1}`}
+                    className="h-36 w-full object-cover"
+                  />
+                  <div className="px-3 py-2">
+                    <p className="text-[11px] text-(--color-secondary-content)">
+                      Image {index + 1}
                     </p>
                   </div>
                 </div>
