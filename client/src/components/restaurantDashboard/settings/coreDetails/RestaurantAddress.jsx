@@ -21,6 +21,7 @@ const RestaurantAddress = () => {
     geoLon: restaurantData?.geoLocation?.lon || "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const handleRestaurantAddressChange = (e) => {
     const { name, value } = e.target;
@@ -32,7 +33,7 @@ const RestaurantAddress = () => {
 
   const handleGetLocation = () => {
     if (navigator.geolocation) {
-      setIsLoading(true);
+      setIsFetchingLocation(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -41,24 +42,44 @@ const RestaurantAddress = () => {
             geoLat: latitude,
             geoLon: longitude,
           }));
-          setIsLoading(false);
+          setIsFetchingLocation(false);
         },
         (error) => {
           console.error("Error getting location:", error);
-          setIsLoading(false);
+          setIsFetchingLocation(false);
         },
       );
     }
   };
 
-  const handleSaveRestaurantAddress = () => {
-    // Implement save logic here, e.g., API call to save the address
-    setEditingRestaurantAddress(false);
+  const handleSaveRestaurantAddress = async () => {
+    try {
+      setIsLoading(true);
+      const res = await api.put("/restaurant/update-address", restaurantAddressFormData);
+      setRestaurantData(res.data.data);
+      sessionStorage.setItem("cravingRestaurant", JSON.stringify(res.data.data));
+      toast.success(res.data.message);
+      setEditingRestaurantAddress(false);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update address. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancelRestaurantAddress = () => {
+    setRestaurantAddressFormData({
+      address: restaurantData?.address || "",
+      city: restaurantData?.city || "",
+      state: restaurantData?.state || "",
+      pinCode: restaurantData?.pinCode || "",
+      country: restaurantData?.country || "",
+      geoLat: restaurantData?.geoLocation?.lat || "",
+      geoLon: restaurantData?.geoLocation?.lon || "",
+    });
     setEditingRestaurantAddress(false);
-    // Optionally reset the form data to the original values if needed
   };
 
   return (
@@ -85,9 +106,9 @@ const RestaurantAddress = () => {
               <button
                 onClick={handleGetLocation}
                 className="flex items-center gap-2 bg-(--color-primary) text-(--color-primary-content) px-2 py-0.5 rounded text-xs"
-                disabled={isLoading}
+                disabled={isFetchingLocation}
               >
-                {isLoading
+                {isFetchingLocation
                   ? "Getting Current Location..."
                   : "Get Current Location"}
               </button>
