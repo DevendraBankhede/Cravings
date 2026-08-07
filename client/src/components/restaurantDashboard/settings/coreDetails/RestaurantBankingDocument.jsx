@@ -22,10 +22,31 @@ const RestaurantBankingDocument = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSaveBankingDocument = async () => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const res = await api.put("/restaurant/update-banking-documents", bankingDocumentFormData);
+      setRestaurantData(res.data.data);
+      sessionStorage.setItem("cravingRestaurant", JSON.stringify(res.data.data));
+      toast.success(res.data.message);
+      setEditingBankingDocument(false);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update banking details. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancelBankingDocument = () => {
+    setBankingDocumentFormData({
+      bankName: restaurantData?.financialDetails?.bankName || "",
+      accountNumber: restaurantData?.financialDetails?.accountNumber || "",
+      ifscCode: restaurantData?.financialDetails?.ifscCode || "",
+      panCard: restaurantData?.documents?.panCard || "",
+      gst: restaurantData?.documents?.gstCertificate || "",
+      fssai: restaurantData?.documents?.fssaiCertificate || "",
+    });
     setEditingBankingDocument(false);
   };
 
