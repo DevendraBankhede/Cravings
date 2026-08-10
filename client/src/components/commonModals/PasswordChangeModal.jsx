@@ -100,7 +100,7 @@ const PasswordChangeModal = ({ open, onClose }) => {
                   Confirm New Password
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   id="confirmNewPassword"
                   name="confirmNewPassword"
                   value={formData.confirmNewPassword}
