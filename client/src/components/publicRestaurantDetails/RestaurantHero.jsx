@@ -17,7 +17,7 @@ const RestaurantHero = ({ restaurant, onBack }) => {
         <div className="w-full h-full bg-linear-to-br from-orange-700/80 to-neutral-700" />
       )}
       <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
-
+      
       {/* Back button */}
       <button
         onClick={onBack}
