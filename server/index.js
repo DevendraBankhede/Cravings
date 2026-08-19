@@ -8,6 +8,8 @@ import AdminRouter from "./src/router/admin.route.js";
 import RestaurantRouter from "./src/router/restaurant.route.js";
 import CustomerRouter from "./src/router/customer.route.js";
 import RiderRouter from "./src/router/rider.route.js";
+import OrderRouter from "./src/router/order.route.js";
+import PaymentRouter from "./src/router/payment.route.js";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -28,8 +30,8 @@ app.use("/admin", AdminRouter);
 app.use("/restaurant", RestaurantRouter);
 app.use("/customer", CustomerRouter);
 app.use("/rider", RiderRouter);
-
-
+app.use("/order", OrderRouter);
+app.use("/payment", PaymentRouter);
 
 //Default API
 app.get("/", (req, res) => {
