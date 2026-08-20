@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoLight from "../assets/transparentLogoLight.png";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import { FaPowerOff } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import api from "../config/Apiconfig";
 
 const Navbar = () => {
-  const { user, isLogin, role, setUser, setIsLogin, setRole, cartItemCount } =
-    useAuth();
+  const { user, isLogin, role, setUser, setIsLogin, setRole } = useAuth();
+  const { totalItems } = useCart();
   const navigate = useNavigate();
 
   const handleNavigate = () => {
@@ -57,14 +58,15 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 relative">
               <button
+                onClick={() => navigate("/cart")}
                 className="hover:scale-110 transition-transform duration-200"
                 title="Go to Cart"
               >
                 <IoCartOutline className="text-(--color-primary-content) text-3xl" />
               </button>
-              {cartItemCount > 0 && (
+              {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-(--color-error) text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartItemCount}
+                  {totalItems}
                 </span>
               )}
             </div>
