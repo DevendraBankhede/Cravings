@@ -4,7 +4,7 @@ import { MdOutlineRestaurantMenu } from "react-icons/md";
 import { foodTypeDot } from "./helpers";
 import MenuItemCard from "./MenuItemCard";
 
-const RestaurantMenu = ({ menuItems }) => {
+const RestaurantMenu = ({ menuItems, restaurantId, restaurantName }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeFoodType, setActiveFoodType] = useState("All");
@@ -118,7 +118,12 @@ const RestaurantMenu = ({ menuItems }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
             {filteredItems.map((item) => (
-              <MenuItemCard key={item._id} item={item} />
+              <MenuItemCard
+                key={item._id}
+                item={item}
+                restaurantId={restaurantId}
+                restaurantName={restaurantName}
+              />
             ))}
           </div>
         )}
