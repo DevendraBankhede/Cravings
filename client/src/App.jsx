@@ -13,8 +13,8 @@ import RiderDashboard from "./pages/dashboard/RiderDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import Test from "./pages/Test";
 import OrderNow from "./pages/OrderNow";
-import Cart from "./pages/Cart";
 import RestaurantDetailsPage from "./pages/RestaurantDetailsPage";
+import Cart from "./components/Cart";
 
 const App = () => {
   return (
@@ -34,11 +34,11 @@ const App = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/test" element={<Test />} />
         <Route path="/order-now" element={<OrderNow />} />
-        <Route path="/cart" element={<Cart />} />
         <Route
           path="/restaurant-details/:restaurantId"
           element={<RestaurantDetailsPage />}
         />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       <Footer />
     </>
