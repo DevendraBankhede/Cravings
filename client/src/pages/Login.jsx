@@ -74,7 +74,7 @@ const Login = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Unknown error occurred during registration. Please try again.",
+          "Unknown error occurred during Login. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -167,12 +167,12 @@ const Login = () => {
                 />
                 <span className="text-sm">Remember me</span>
               </label>
-              <button
+              <div
                 onClick={() => setIsForgotPasswordModalOpen(true)}
                 className="text-sm text-(--color-primary) hover:underline transition-colors"
               >
                 Forgot Password?
-              </button>
+              </div>
             </div>
 
             {/* Login Button */}
