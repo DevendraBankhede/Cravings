@@ -34,7 +34,7 @@ const Home = () => {
     const loadRestaurants = async () => {
       try {
         setLoading(true);
-        const response = await api.get("/public/restau");
+       const response = await api.get("/restau");
 
         // Map API response to match component's expected format
         const formattedRestaurants = response.data.data.map((restaurant) => ({
