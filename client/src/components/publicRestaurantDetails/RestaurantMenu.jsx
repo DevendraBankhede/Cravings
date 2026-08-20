@@ -118,12 +118,7 @@ const RestaurantMenu = ({ menuItems, restaurantId, restaurantName }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
             {filteredItems.map((item) => (
-              <MenuItemCard
-                key={item._id}
-                item={item}
-                restaurantId={restaurantId}
-                restaurantName={restaurantName}
-              />
+              <MenuItemCard key={item._id} item={item} restaurantId={restaurantId} restaurantName={restaurantName} />
             ))}
           </div>
         )}
