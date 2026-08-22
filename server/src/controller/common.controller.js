@@ -52,7 +52,7 @@ export const EditUserProfile = async (req, res, next) => {
       .json({ message: "User Updated Sucessfully", data: existingUser });
   } catch (error) {
     console.log(error.message);
-    next();
+    next(error);
   }
 };
 
@@ -97,6 +97,6 @@ export const UpdateUserPassword = async (req, res, next) => {
     res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
     console.log(error.message);
-    next();
+    next(error);
   }
 };
