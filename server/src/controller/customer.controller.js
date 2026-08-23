@@ -209,6 +209,6 @@ export const GetAllOrders = async (req, res, next) => {
     res.status(200).json({ message: "All Order Fetched", data: allOrder });
   } catch (error) {
     console.log(error);
-    next();
+    next(error);
   }
 };
