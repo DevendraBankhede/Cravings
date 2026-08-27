@@ -197,7 +197,7 @@ export const RestaurantUpdateInfo = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error.message);
-    next();
+    next(error);
   }
 };
 
@@ -229,7 +229,7 @@ export const OpenRestaurant = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error.message);
-    next();
+    next(error);
   }
 };
 
@@ -267,7 +267,7 @@ export const RestaurantUpdateLegalInfo = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error.message);
-    next();
+    next(error);
   }
 };
 
@@ -394,7 +394,7 @@ export const RestaurantAddMenuItem = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error.message);
-    next();
+    next(error);
   }
 };
 
@@ -433,7 +433,7 @@ export const RestaurantMenuItems = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error.message);
-    next();
+    next(error);
   }
 };
 
