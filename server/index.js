@@ -13,6 +13,7 @@ import CustomerRouter from "./src/router/customer.route.js";
 import RiderRouter from "./src/router/rider.route.js";
 import OrderRouter from "./src/router/order.route.js";
 import PaymentRouter from "./src/router/payment.route.js";
+import ReviewRouter from "./src/router/review.route.js";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -45,6 +46,7 @@ app.use("/customer", CustomerRouter);
 app.use("/rider", RiderRouter);
 app.use("/order", OrderRouter);
 app.use("/payment", PaymentRouter);
+app.use("/review", ReviewRouter);
 
 //Default API
 app.get("/", (req, res) => {
