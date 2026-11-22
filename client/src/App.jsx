@@ -15,6 +15,7 @@ import Test from "./pages/Test";
 import OrderNow from "./pages/OrderNow";
 import RestaurantDetailsPage from "./pages/RestaurantDetailsPage";
 import Cart from "./components/Cart";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -28,10 +29,38 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/register/:userType" element={<Register />} />
-        <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-        <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
-        <Route path="/rider-dashboard" element={<RiderDashboard />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route
+          path="/customer-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["customer"]}>
+              <CustomerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/restaurant-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["restaurant"]}>
+              <RestaurantDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rider-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["rider"]}>
+              <RiderDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/test" element={<Test />} />
         <Route path="/order-now" element={<OrderNow />} />
         <Route
