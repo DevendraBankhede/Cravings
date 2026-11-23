@@ -16,10 +16,12 @@ import {
   IoIosRemoveCircleOutline,
 } from "react-icons/io";
 import { MdOutlineRestaurantMenu } from "react-icons/md";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Cart = () => {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
   const {
     cart,
     totalItems,
@@ -31,6 +33,20 @@ const Cart = () => {
   } = useCart();
   const { isLogin, role, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLogin && role === "customer") {
+      api
+        .get("/customer/address-book")
+        .then((res) => {
+          const list = res.data.data || [];
+          setAddresses(list);
+          const defaultIdx = list.findIndex((a) => a.isDefault);
+          if (defaultIdx !== -1) setSelectedAddressIndex(defaultIdx);
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [isLogin, role]);
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -70,10 +86,24 @@ const Cart = () => {
     try {
       setIsPlacingOrder(true);
 
+      const activeAddress = addresses[selectedAddressIndex];
+      const deliveryAddress = activeAddress
+        ? {
+            name: activeAddress.name || user.fullName,
+            address: activeAddress.address,
+            city: activeAddress.city,
+            state: activeAddress.state,
+            pinCode: activeAddress.pinCode,
+            country: activeAddress.country || "India",
+            geoLocation: activeAddress.geoLocation || { lat: "", lon: "" },
+          }
+        : undefined;
+
       // 2. Create the app-level order in our database
       const createOrderRes = await api.post("/order/create", {
         restaurantId: cart.restaurantId,
         paymentMethod: "upi",
+        deliveryAddress,
         orderItems: cart.items.map((i) => ({
           itemId: i._id,
           quantity: i.quantity,
@@ -313,6 +343,26 @@ const Cart = () => {
                 </span>
               </div>
             </div>
+
+            {/* Delivery Address Picker */}
+            {isLogin && addresses.length > 0 && (
+              <div className="mb-4">
+                <label className="block text-xs font-semibold text-(--color-secondary) mb-1">
+                  Delivery Address:
+                </label>
+                <select
+                  value={selectedAddressIndex}
+                  onChange={(e) => setSelectedAddressIndex(Number(e.target.value))}
+                  className="w-full p-2 rounded-lg border border-(--color-base-300) bg-(--color-base-200) text-xs truncate"
+                >
+                  {addresses.map((addr, idx) => (
+                    <option key={addr._id || idx} value={idx}>
+                      {addr.name} ({addr.addressType}): {addr.address}, {addr.city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <button
               disabled={isPlacingOrder}
