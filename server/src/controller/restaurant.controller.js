@@ -6,6 +6,7 @@ import {
   deleteSingleImage,
 } from "../utils/image.service.js";
 import Menu from "../models/menu.model.js";
+import Order from "../models/order.model.js";
 
 export const RestaurantGetData = async (req, res, next) => {
   try {
@@ -813,6 +814,82 @@ export const RestaurantUpdateRestaurantImages = async (req, res, next) => {
     return res.status(200).json({
       message: "Restaurant images updated successfully",
       data: existingRestaurant,
+    });
+  } catch (error) {
+    console.log(error.message);
+    next(error);
+  }
+};
+
+export const RestaurantGetOrders = async (req, res, next) => {
+  try {
+    const currentUser = req.user;
+    const restaurant = await Restaurant.findOne({ managerId: currentUser._id });
+    if (!restaurant) {
+      return res.status(200).json({ data: [] });
+    }
+
+    const orders = await Order.find({ restaurantId: restaurant._id })
+      .populate({
+        path: "customerId",
+        populate: { path: "customerId", select: "fullName phone" },
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Restaurant orders fetched successfully",
+      data: orders,
+    });
+  } catch (error) {
+    console.log(error.message);
+    next(error);
+  }
+};
+
+export const RestaurantUpdateOrderStatus = async (req, res, next) => {
+  try {
+    const currentUser = req.user;
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = [
+      "accepted",
+      "preparing",
+      "ready",
+      "cancelled",
+      "rejected",
+    ];
+
+    if (!validStatuses.includes(status)) {
+      const error = new Error("Invalid order status");
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    const restaurant = await Restaurant.findOne({ managerId: currentUser._id });
+    if (!restaurant) {
+      const error = new Error("Restaurant not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    const order = await Order.findOne({
+      _id: orderId,
+      restaurantId: restaurant._id,
+    });
+
+    if (!order) {
+      const error = new Error("Order not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    order.orderStatus = status;
+    await order.save();
+
+    res.status(200).json({
+      message: `Order status updated to ${status}`,
+      data: order,
     });
   } catch (error) {
     console.log(error.message);
